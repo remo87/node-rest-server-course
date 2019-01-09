@@ -3,7 +3,7 @@ require('./config/config')
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
+const path = require('path');
 
 const app = express();
 
@@ -15,6 +15,8 @@ app.use(bodyParser.json());
 
 //configure paths
 app.use(require('./routes/index'));
+
+app.use(express.static(path.resolve(__dirname, '../public')))
 
 mongoose.connect(process.env.URLDB, (err) => {
     
