@@ -6,7 +6,7 @@ process.env.URLDB = process.env.NODE_ENV === 'dev' ?
     'mongodb://localhost:27017/cafe' 
     : process.env.MONGO_URI;
 
-process.env.TOKEN_EXPIRATION = 60 * 60 * 24 * 30;
+process.env.TOKEN_EXPIRATION = '48h';
 process.env.TOKEN_SEED = process.env.TOKEN_SEED || 'this-is-dev-seed';
 
 
