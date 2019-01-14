@@ -1,6 +1,7 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const User = require('../models/user');
+const Product = require('../models/product');
 const fs = require('fs');
 const path = require('path');
 
@@ -57,8 +58,10 @@ app.put('/upload/:type/:id', function (req, res) {
                 err
             });
         }
-
-        userImage(res, id, fileName);
+        switch (type) {
+            case 'products': productImage(res, id, fileName); break;
+            case 'users': userImage(res, id, fileName); break;
+        }
     });
 });
 
@@ -97,6 +100,48 @@ function userImage(res, userId, fileName) {
             res.json({
                 ok: true,
                 user: savedUser,
+                img: fileName,
+            })
+        })
+
+    });
+}
+
+function productImage(res, productId, fileName) {
+
+    Product.findById(productId, (err, dbProduct) => {
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!dbProduct) {
+            return res.status(404).json({
+                ok: false,
+                err: {
+                    message: 'Product does not exists'
+                }
+            });
+        }
+
+        deleteFile(dbProduct.img, 'products');
+
+        dbProduct.img = fileName;
+
+        dbProduct.save((err, savedProduct) => {
+
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                user: savedProduct,
                 img: fileName,
             })
         })
